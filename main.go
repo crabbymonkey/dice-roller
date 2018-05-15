@@ -52,6 +52,13 @@ func randomValue(low int, high int) int {
   return rand.Intn(scaledInt) + low
 }
 
+func getPort() string {
+  if value, ok := os.LookupEnv("PORT"); ok {
+        return ":" + value
+    }
+    return ":8080"
+}
+
 // Basic Dice object.
 // D20 would have a High of 20 and Low of 1.
 type Dice struct {
@@ -64,5 +71,7 @@ func main() {
   http.HandleFunc("/common/", commonSetHandler)
   http.HandleFunc("/custom/", customSetHandler)
   http.HandleFunc("/", randomPageHandler)
-  log.Fatal(http.ListenAndServe(":8080", nil))
+  var port string = getPort()
+  fmt.Println("Now listening to port " + port)
+  log.Fatal(http.ListenAndServe(port, nil))
 }
