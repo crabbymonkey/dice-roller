@@ -6,7 +6,7 @@
     GOCLEAN=$(GOCMD) clean
     GOTEST=$(GOCMD) test
     GOGET=$(GOCMD) get
-    BINARY_NAME=dice-roller-binary
+    BINARY_NAME=dice-roller
     BINARY_UNIX=$(BINARY_NAME)_unix
 
     all: fmt lint test build

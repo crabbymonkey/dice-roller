@@ -5,6 +5,7 @@
 *.so
 *.dylib
 *-binary
+dice-roller
 
 # Test binary, build with `go test -c`
 *.test

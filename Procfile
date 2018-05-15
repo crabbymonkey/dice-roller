@@ -1,1 +1,1 @@
-web: dice-roller-binary
+web: dice-roller
