@@ -3,4 +3,4 @@ build:
     - go
 
 run:
-  web: dice-roller
+  web: multi-dice-roller

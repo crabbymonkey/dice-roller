@@ -1,1 +1,1 @@
-web: dice-roller
+web: multi-dice-roller
