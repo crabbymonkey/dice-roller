@@ -1,0 +1,7 @@
+{
+  "rootPath": "github.com/crabbymonkey/dice-roller",
+  "heroku": {
+      "install" : [ "./..." ],
+      "goVersion": "go1.6"
+       }
+}
