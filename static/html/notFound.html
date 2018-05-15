@@ -13,13 +13,27 @@
           }
 
           .outline {
+            font-family: "Lucida Console", "Lucida Sans Typewriter", monaco, "Bitstream Vera Sans Mono", monospace;
             color: black;
+          }
+          .outline-big {
+            font-size: 272;
+            text-shadow:
+		          -4px -4px 0 #fff,
+          		4px -4px 0 #fff,
+          		-4px 4px 0 #fff,
+          		4px 4px 0 #fff;
+          }
+          .outline-small {
+            font-size: 32;
             text-shadow:
 		          -2px -2px 0 #fff,
           		2px -2px 0 #fff,
           		-2px 2px 0 #fff,
           		2px 2px 0 #fff;
           }
+
+
 
           .bg {
               /* The image used */
@@ -46,8 +60,8 @@
       <div class="container">
         <div class="bg"></div>
         <div class="container centered">
-          <div class="outline" style="font-size:272;">404</div>
-          <div class="outline" style="font-size:48;">Looks like something is missing...</div>
+          <div class="outline outline-big">404</div>
+          <div class="outline outline-small">Looks like something is missing...</div>
         </div>
       </div>
     </body>

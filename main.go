@@ -13,7 +13,7 @@ import (
 )
 
 func homeHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Pick your dice!", r.URL.Path[1:])
+	fmt.Fprintf(w, "Pick your dice!")
 }
 
 func commonSetHandler(w http.ResponseWriter, r *http.Request) {
@@ -30,7 +30,7 @@ func randomPageHandler(w http.ResponseWriter, r *http.Request) {
 	// If static page show the static package
 	// Else show the 404 page
 	if r.URL.Path == "/" {
-
+    homeHandler(w, r)
 	} else if _, err := strconv.Atoi(r.URL.Path[1:]); err == nil {
 		fmt.Fprintf(w, "You rolled a D%s! \n", r.URL.Path[1:])
 		inputInt, err := strconv.Atoi(r.URL.Path[1:])
