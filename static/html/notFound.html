@@ -1,63 +1,21 @@
 <html>
     <head>
         <title>Dice Roller</title>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <link href="static/stylesheets/style.css" rel="stylesheet" type="text/css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
         <style>
           body, html {
               height: 100%;
               margin: 0;
           }
-
-          .container {
-            position: relative;
-            text-align: center;
-          }
-
-          .outline {
-            font-family: "Lucida Console", "Lucida Sans Typewriter", monaco, "Bitstream Vera Sans Mono", monospace;
-            color: black;
-          }
-          .outline-big {
-            font-size: 272;
-            text-shadow:
-		          -4px -4px 0 #fff,
-          		4px -4px 0 #fff,
-          		-4px 4px 0 #fff,
-          		4px 4px 0 #fff;
-          }
-          .outline-small {
-            font-size: 32;
-            text-shadow:
-		          -2px -2px 0 #fff,
-          		2px -2px 0 #fff,
-          		-2px 2px 0 #fff,
-          		2px 2px 0 #fff;
-          }
-
-          .bg {
-              /* The image used */
-              background-image: url("static/img/black-and-white-blank-challenge-262488.jpg");
-
-              /* Full height */
-              height: 100%;
-
-              /* Center and scale the image nicely */
-              background-position: center;
-              background-repeat: no-repeat;
-              background-size: cover;
-          }
-
-          .centered {
-              position: absolute;
-              top: 50%;
-              left: 50%;
-              transform: translate(-50%, -50%);
-          }
         </style>
     </head>
     <body>
-      <div class="container">
-        <div class="bg"></div>
-        <div class="container centered">
+      <div class="center-container">
+        <div class="bg" style="background-image: url('static/img/black-and-white-blank-challenge-262488.jpg');"></div>
+        <div class="center-container centered">
           <div class="outline outline-big">404</div>
           <div class="outline outline-small">Looks like something is missing...</div>
         </div>
