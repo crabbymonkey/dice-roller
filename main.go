@@ -12,7 +12,7 @@ import (
 )
 
 //Compile templates on start
-var templates = template.Must(template.ParseFiles("templates/notFound.html", "templates/header.html", "templates/footer.html", "templates/index.html"))
+var templates = template.Must(template.ParseFiles("templates/notFound.html", "templates/header.html", "templates/footer.html", "templates/index.html", "templates/dedicatedDice.html"))
 
 //A Page structure
 type Page struct {
@@ -47,6 +47,25 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 	display(w, "index", data)
 }
 
+func dedicatedDiceHandler(w http.ResponseWriter, r *http.Request) {
+	inputInt, err := strconv.Atoi(r.URL.Path[1:])
+	if err != nil {
+		// handle error
+		fmt.Println(err)
+		os.Exit(2)
+	}
+	var value int = randomValue(1, inputInt)
+
+	data := RolledDice{
+		PageTitle: "D" + r.URL.Path[1:],
+		Value:     value,
+		High:      inputInt,
+		Low:       1,
+	}
+
+	display(w, "dedicated", data)
+}
+
 func commonSetHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "This is the common set of dice!", r.URL.Path[1:])
 }
@@ -63,14 +82,7 @@ func randomPageHandler(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path == "/" {
 		homeHandler(w, r)
 	} else if _, err := strconv.Atoi(r.URL.Path[1:]); err == nil {
-		fmt.Fprintf(w, "You rolled a D%s! \n", r.URL.Path[1:])
-		inputInt, err := strconv.Atoi(r.URL.Path[1:])
-		if err != nil {
-			// handle error
-			fmt.Println(err)
-			os.Exit(2)
-		}
-		fmt.Fprintf(w, "it was a %d", randomValue(1, inputInt))
+		dedicatedDiceHandler(w, r)
 	} else if strings.HasSuffix(r.URL.Path[1:], ".html") {
 		http.ServeFile(w, r, "static/html/"+r.URL.Path[1:])
 	} else {
@@ -115,8 +127,16 @@ type TodoPageData struct {
 // Basic Dice object.
 // D20 would have a High of 20 and Low of 1.
 type Dice struct {
-	High int
-	Low  int
+	PageTitle string
+	High      int
+	Low       int
+}
+
+type RolledDice struct {
+	PageTitle string
+	High      int
+	Low       int
+	Value     int
 }
 
 func main() {
