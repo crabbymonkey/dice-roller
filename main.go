@@ -2,18 +2,49 @@ package main
 
 import (
 	"fmt"
+	"html/template"
 	"log"
 	"math/rand"
+	"net/http"
 	"os"
 	"strconv"
 	"strings"
-	// "html/template"
-	// "io/ioutil"
-	"net/http"
 )
 
+//Compile templates on start
+var templates = template.Must(template.ParseFiles("templates/notFound.html", "templates/header.html", "templates/footer.html", "templates/index.html"))
+
+//A Page structure
+type Page struct {
+	PageTitle string
+}
+
+//Display the named template
+func display(w http.ResponseWriter, tmpl string, data interface{}) {
+	templates.ExecuteTemplate(w, tmpl, data)
+}
+
 func homeHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Pick your dice!")
+	data := TodoPageData{
+		PageTitle: "Home",
+		ListTitle: "My TODO List",
+		Todos: []Todo{
+			{Title: "Project Setup", Done: true},
+			{Title: "Setup CI", Done: false},
+			{Title: "Setup CD", Done: true},
+			{Title: "Make Test Cases", Done: false},
+			{Title: "Basic Dice Rolls Based on URL", Done: true},
+			{Title: "Flushout Navbar", Done: false},
+			{Title: "Create 404", Done: true},
+			{Title: "Create Common Dice Set Page", Done: false},
+			{Title: "Create Custom Dice Set Page", Done: false},
+			{Title: "Add Dice Graphics", Done: false},
+			{Title: "Add How to Use Page", Done: false},
+			{Title: "Flushout Dedicated Dice Page with Reroll button", Done: false},
+			{Title: "Make a logo", Done: false},
+		},
+	}
+	display(w, "index", data)
 }
 
 func commonSetHandler(w http.ResponseWriter, r *http.Request) {
@@ -51,7 +82,7 @@ func randomPageHandler(w http.ResponseWriter, r *http.Request) {
 func errorHandler(w http.ResponseWriter, r *http.Request, status int) {
 	w.WriteHeader(status)
 	if status == http.StatusNotFound {
-		http.ServeFile(w, r, "static/html/notFound.html")
+		display(w, "404", &Page{PageTitle: "404"})
 	} else {
 		http.ServeFile(w, r, "static/html/issue.html")
 	}
@@ -68,6 +99,17 @@ func getPort() string {
 		return ":" + value
 	}
 	return ":8080"
+}
+
+type Todo struct {
+	Title string
+	Done  bool
+}
+
+type TodoPageData struct {
+	PageTitle string
+	ListTitle string
+	Todos     []Todo
 }
 
 // Basic Dice object.
