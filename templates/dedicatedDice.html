@@ -1,8 +1,18 @@
 {{define "dedicated"}}
   {{template "header" .}}
   <div class="center-container centered">
-    <h3>You rolled a D{{.High}}</h3>
-    <h4>it was a {{.Value}}!</h4>
+    <h3>You rolled a D{{.Die.High}}</h3>
+    <h4 id="rollmsg">it was a {{.Die.Roll}}!</h4>
+    <button id="rerollbtn" type="button" class="btn btn-info">Reroll</button>
   </div>
+  <script type="text/javascript">
+    $("#rerollbtn").click(function() {
+      var newVal = Math.floor((Math.random() * {{.Die.High}}) + {{.Die.Low}});
+      document.getElementById("rollmsg").innerHTML = "Rolling...";
+      setTimeout(function(){
+        document.getElementById("rollmsg").innerHTML = "it was a " + newVal + "!";
+      }, 500);
+    });
+  </script>
   {{template "footer" .}}
 {{end}}

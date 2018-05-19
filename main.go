@@ -12,12 +12,15 @@ import (
 )
 
 //Compile templates on start
-var templates = template.Must(template.ParseFiles("templates/notFound.html", "templates/header.html", "templates/footer.html", "templates/index.html", "templates/dedicatedDice.html"))
-
-//A Page structure
-type Page struct {
-	PageTitle string
-}
+var templates = template.Must(template.ParseFiles(
+	"templates/notFound.html",
+	"templates/header.html",
+	"templates/footer.html",
+	"templates/index.html",
+	"templates/commonDice.html",
+	"templates/customDice.html",
+	"templates/dedicatedDice.html",
+	"templates/todo.html"))
 
 //Display the named template
 func display(w http.ResponseWriter, tmpl string, data interface{}) {
@@ -25,8 +28,15 @@ func display(w http.ResponseWriter, tmpl string, data interface{}) {
 }
 
 func homeHandler(w http.ResponseWriter, r *http.Request) {
-	data := TodoPageData{
+	data := Page{
 		PageTitle: "Home",
+	}
+	display(w, "index", data)
+}
+
+func todoHandler(w http.ResponseWriter, r *http.Request) {
+	data := TodoPageData{
+		PageTitle: "TODO List",
 		ListTitle: "My TODO List",
 		Todos: []Todo{
 			{Title: "Project Setup", Done: true},
@@ -38,13 +48,14 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 			{Title: "Create 404", Done: true},
 			{Title: "Create Common Dice Set Page", Done: false},
 			{Title: "Create Custom Dice Set Page", Done: false},
-			{Title: "Add Dice Graphics", Done: false},
+			{Title: "Add Dice Graphics", Done: true},
 			{Title: "Add How to Use Page", Done: false},
-			{Title: "Flushout Dedicated Dice Page with Reroll button", Done: false},
+			{Title: "Flushout Dedicated Dice Page with Reroll button", Done: true},
 			{Title: "Make a logo", Done: false},
+			{Title: "Make a AJAX callback to server to get dice roll values", Done: false},
 		},
 	}
-	display(w, "index", data)
+	display(w, "todo", data)
 }
 
 func dedicatedDiceHandler(w http.ResponseWriter, r *http.Request) {
@@ -54,20 +65,28 @@ func dedicatedDiceHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(err)
 		os.Exit(2)
 	}
-	var value int = randomValue(1, inputInt)
 
-	data := RolledDice{
+	data := DiePage{
 		PageTitle: "D" + r.URL.Path[1:],
-		Value:     value,
-		High:      inputInt,
-		Low:       1,
+		Die:       Dice{High: inputInt, Low: 1},
 	}
 
 	display(w, "dedicated", data)
 }
 
 func commonSetHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "This is the common set of dice!", r.URL.Path[1:])
+	data := DiceSetPage{
+		PageTitle: "Common Dice Set",
+		Dice: []Dice{
+			{High: 20, Low: 1},
+			{High: 12, Low: 1},
+			{High: 10, Low: 1},
+			{High: 8, Low: 1},
+			{High: 6, Low: 1},
+			{High: 4, Low: 1},
+		},
+	}
+	display(w, "common", data)
 }
 
 func customSetHandler(w http.ResponseWriter, r *http.Request) {
@@ -106,11 +125,44 @@ func randomValue(low int, high int) int {
 	return rand.Intn(scaledInt) + low
 }
 
+var funcMap = template.FuncMap{
+	"randomValue": randomValue,
+}
+
+func (d Dice) Roll() int {
+	return randomValue(d.Low, d.High)
+}
+
 func getPort() string {
 	if value, ok := os.LookupEnv("PORT"); ok {
 		return ":" + value
 	}
 	return ":8080"
+}
+
+func main() {
+	// http.HandleFunc("", homeHandler)
+	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
+
+	// Serve /callme with a text response.
+	// http.HandleFunc("/randomDiceValue", func(w http.ResponseWriter, r *http.Request), die Dice {
+	// 	randomValue(die.Low, die.High)
+	// })
+
+	http.HandleFunc("/common/", commonSetHandler)
+	http.HandleFunc("/custom/", customSetHandler)
+	http.HandleFunc("/todo/", todoHandler)
+
+	http.HandleFunc("/", randomPageHandler)
+
+	var port string = getPort()
+	fmt.Println("Now listening to port " + port)
+	log.Fatal(http.ListenAndServe(port, nil))
+}
+
+//A Page structure
+type Page struct {
+	PageTitle string
 }
 
 type Todo struct {
@@ -124,31 +176,29 @@ type TodoPageData struct {
 	Todos     []Todo
 }
 
+type DiceSetPage struct {
+	PageTitle string
+	Dice      []Dice
+}
+
+type DiePage struct {
+	PageTitle string
+	Die       Dice
+}
+
 // Basic Dice object.
 // D20 would have a High of 20 and Low of 1.
 type Dice struct {
-	PageTitle string
-	High      int
-	Low       int
+	High int
+	Low  int
 }
+
+//Note that you can add a function as a part of a struct that you can define when you create the object
+// Roll func() int
 
 type RolledDice struct {
 	PageTitle string
 	High      int
 	Low       int
 	Value     int
-}
-
-func main() {
-	// http.HandleFunc("", homeHandler)
-	http.HandleFunc("/common/", commonSetHandler)
-	http.HandleFunc("/custom/", customSetHandler)
-
-	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
-
-	http.HandleFunc("/", randomPageHandler)
-
-	var port string = getPort()
-	fmt.Println("Now listening to port " + port)
-	log.Fatal(http.ListenAndServe(port, nil))
 }

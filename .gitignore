@@ -6,6 +6,7 @@
 *.dylib
 *-binary
 dice-roller
+*.DS_Store
 
 # Test binary, build with `go test -c`
 *.test
