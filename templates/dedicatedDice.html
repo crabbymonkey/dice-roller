@@ -1,9 +1,10 @@
 {{define "dedicated"}}
   {{template "header" .}}
   <div class="center-container centered">
-    <h3>You rolled a D{{.Die.High}}</h3>
-    <h4 id="rollmsg">it was a {{.Die.Roll}}!</h4>
-    <button id="rerollbtn" type="button" class="btn btn-info">Reroll</button>
+    <h2>You rolled a D{{.Die.High}}</h2>
+    <h3 id="rollmsg">it was a {{.Die.Roll}}!</h3>
+    <br>
+    <button id="rerollbtn" type="button" class="btn btn-info btn-lg">Reroll</button>
   </div>
   <script type="text/javascript">
     $("#rerollbtn").click(function() {
