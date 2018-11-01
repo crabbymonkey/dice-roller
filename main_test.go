@@ -14,6 +14,123 @@ func TestMain(m *testing.M) {
 	os.Exit(m.Run())
 }
 
+func TestCommonHandler(t *testing.T) {
+	// Create a request to pass to our handler. We don't have any query parameters for now, so we'll
+	// pass 'nil' as the third parameter.
+	req1, err := http.NewRequest("GET", "/common", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	req2, err := http.NewRequest("POST", "/common", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	reqs := []*http.Request{req1, req2}
+
+	for _, req := range reqs {
+		// We create a ResponseRecorder (which satisfies http.ResponseWriter) to record the response.
+		rr := httptest.NewRecorder()
+		handler := http.HandlerFunc(commonSetHandler)
+
+		// Our handlers satisfy http.Handler, so we can call their ServeHTTP method
+		// directly and pass in our Request and ResponseRecorder.
+		handler.ServeHTTP(rr, req)
+
+		// Check the status code is what we expect.
+		if status := rr.Code; status != http.StatusSeeOther {
+			t.Errorf("handler returned wrong status code: got %v want %v",
+				status, http.StatusSeeOther)
+		}
+
+		// Check the response body is what we expect.
+		// expected := `{"alive": true}`
+		// if rr.Body.String() != expected {
+		// 	t.Errorf("handler returned unexpected body: got %v want %v",
+		// 		rr.Body.String(), expected)
+		// }
+	}
+}
+
+func TestCustomHandler(t *testing.T) {
+	// Create a request to pass to our handler. We don't have any query parameters for now, so we'll
+	// pass 'nil' as the third parameter.
+	req1, err := http.NewRequest("GET", "/custom", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	req2, err := http.NewRequest("POST", "/custom", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	reqs := []*http.Request{req1, req2}
+
+	for _, req := range reqs {
+		// We create a ResponseRecorder (which satisfies http.ResponseWriter) to record the response.
+		rr := httptest.NewRecorder()
+		handler := http.HandlerFunc(customSetHandler)
+
+		// Our handlers satisfy http.Handler, so we can call their ServeHTTP method
+		// directly and pass in our Request and ResponseRecorder.
+		handler.ServeHTTP(rr, req)
+
+		// Check the status code is what we expect.
+		if status := rr.Code; status != http.StatusSeeOther {
+			t.Errorf("handler returned wrong status code: got %v want %v",
+				status, http.StatusSeeOther)
+		}
+
+		// Check the response body is what we expect.
+		// expected := `{"alive": true}`
+		// if rr.Body.String() != expected {
+		// 	t.Errorf("handler returned unexpected body: got %v want %v",
+		// 		rr.Body.String(), expected)
+		// }
+	}
+}
+
+func TestTodoHandler(t *testing.T) {
+	// Create a request to pass to our handler. We don't have any query parameters for now, so we'll
+	// pass 'nil' as the third parameter.
+	req1, err := http.NewRequest("GET", "/todo", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	req2, err := http.NewRequest("POST", "/todo", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	reqs := []*http.Request{req1, req2}
+
+	for _, req := range reqs {
+		// We create a ResponseRecorder (which satisfies http.ResponseWriter) to record the response.
+		rr := httptest.NewRecorder()
+		handler := http.HandlerFunc(todoHandler)
+
+		// Our handlers satisfy http.Handler, so we can call their ServeHTTP method
+		// directly and pass in our Request and ResponseRecorder.
+		handler.ServeHTTP(rr, req)
+
+		// Check the status code is what we expect.
+		if status := rr.Code; status != http.StatusSeeOther {
+			t.Errorf("handler returned wrong status code: got %v want %v",
+				status, http.StatusSeeOther)
+		}
+
+		// Check the response body is what we expect.
+		// expected := `{"alive": true}`
+		// if rr.Body.String() != expected {
+		// 	t.Errorf("handler returned unexpected body: got %v want %v",
+		// 		rr.Body.String(), expected)
+		// }
+	}
+}
+
 func TestRandomPageHandler(t *testing.T) {
 	// Create a request to pass to our handler. We don't have any query parameters for now, so we'll
 	// pass 'nil' as the third parameter.
@@ -131,17 +248,19 @@ func TestGetPort(t *testing.T) {
 	}
 }
 
-func TestRandomValue(t *testing.T) {
+func TestRoll(t *testing.T) {
 	numTests := 10000
 	minVal := 1
 	maxVal := 20
 	expectedNumberOfHits := numTests / ((maxVal - minVal) + 1)
 	criticalChi := 36028.79701896 // This is for a 5% with a DF of 9999
 
+	die := Dice{High: maxVal, Low: minVal}
+
 	totalValues := make(map[int]int)
 
 	for i := 0; i < numTests; i++ {
-		val := randomValue(minVal, maxVal)
+		val := die.roll()
 		totalValues[val] = totalValues[val] + 1
 	}
 

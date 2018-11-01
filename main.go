@@ -63,8 +63,7 @@ func dedicatedDiceHandler(w http.ResponseWriter, r *http.Request) {
 	inputInt, err := strconv.Atoi(r.URL.Path[1:])
 	if err != nil {
 		// handle error
-		fmt.Println(err)
-		os.Exit(2)
+		http.ServeFile(w, r, "static/html/issue.html")
 	}
 
 	data := DiePage{
@@ -132,7 +131,7 @@ var funcMap = template.FuncMap{
 	"randomValue": randomValue,
 }
 
-func (d Dice) Roll() int {
+func (d Dice) roll() int {
 	return randomValue(d.Low, d.High)
 }
 
@@ -144,13 +143,7 @@ func getPort() string {
 }
 
 func main() {
-	// http.HandleFunc("", homeHandler)
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
-
-	// Serve /callme with a text response.
-	// http.HandleFunc("/randomDiceValue", func(w http.ResponseWriter, r *http.Request), die Dice {
-	// 	randomValue(die.Low, die.High)
-	// })
 
 	http.HandleFunc("/common/", commonSetHandler)
 	http.HandleFunc("/custom/", customSetHandler)
@@ -158,47 +151,50 @@ func main() {
 
 	http.HandleFunc("/", randomPageHandler)
 
-	var port string = getPort()
+	port := getPort()
 	fmt.Println("Now listening to port " + port)
 	log.Fatal(http.ListenAndServe(port, nil))
 }
 
-//A Page structure
+// Page structure
 type Page struct {
 	PageTitle string
 }
 
+// Todo struct
 type Todo struct {
 	Title string
 	Done  bool
 }
 
+// TodoPageData with titles and a list of Todos
 type TodoPageData struct {
 	PageTitle string
 	ListTitle string
 	Todos     []Todo
 }
 
+// DiceSetPage with a page title and a list of Dice
 type DiceSetPage struct {
 	PageTitle string
 	Dice      []Dice
 }
 
+// DiePage with a page title and a Dice
 type DiePage struct {
 	PageTitle string
 	Die       Dice
 }
 
-// Basic Dice object.
-// D20 would have a High of 20 and Low of 1.
+// Dice object e.g. D20 would have a High of 20 and Low of 1.
 type Dice struct {
 	High int
 	Low  int
 }
 
-//Note that you can add a function as a part of a struct that you can define when you create the object
+// RolledDice with page title, high value, low value and the rolled value
+// Note that you can add a function as a part of a struct that you can define when you create the object
 // Roll func() int
-
 type RolledDice struct {
 	PageTitle string
 	High      int
