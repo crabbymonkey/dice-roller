@@ -9,6 +9,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"time"
 )
 
 //Compile templates on start
@@ -121,8 +122,10 @@ func errorHandler(w http.ResponseWriter, r *http.Request, status int) {
 
 // Gets a random value from the low to high values. This will include the low and high values.
 func randomValue(low int, high int) int {
-	var scaledInt int = high - low + 1 // The +1 is to offset the values so it can be the high value.
-	return rand.Intn(scaledInt) + low
+	scaledInt := high - low + 1 // The +1 is to offset the values so it can be the high value.
+	randSource := rand.NewSource(time.Now().UnixNano() / int64(time.Millisecond))
+	randomRand := rand.New(randSource)
+	return randomRand.Intn(scaledInt) + low
 }
 
 var funcMap = template.FuncMap{
