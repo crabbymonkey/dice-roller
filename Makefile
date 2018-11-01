@@ -1,12 +1,12 @@
 		# Go parameters
     GOCMD=go
     GOFMT=$(GOCMD) fmt
-    GOBINFLDR=bin
+    GOBINFLDR=./bin
     GOBUILD=$(GOCMD) build
     GOCLEAN=$(GOCMD) clean
     GOTEST=$(GOCMD) test
     GOGET=$(GOCMD) get
-    BINARY_NAME=dice-roller
+    BINARY_NAME=bin/dice-roller
     BINARY_UNIX=$(BINARY_NAME)_unix
 
     all: fmt lint test build
@@ -22,7 +22,7 @@
     test:
 						$(GOTEST) -v ./...
     build:
-						$(GOBUILD) -o $(BINARY_NAME) -v $(GOBINFLDR)
+						$(GOBUILD) -o $(BINARY_NAME) -v
     run:
 						$(GOBUILD) -o $(BINARY_NAME) -v ./...
 						./$(BINARY_NAME)

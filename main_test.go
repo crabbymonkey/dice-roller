@@ -1,7 +1,6 @@
 package main
 
 import (
-	"main"
 	"os"
 	"testing"
 )
